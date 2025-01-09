@@ -19,6 +19,8 @@ final class BusSearchModel: ObservableObject {
         loadBusRouteCoordinateData()
     }
     
+    // TODO: api 가져오는 코드 필요함.
+    
     private func loadCSV(fileName: String, completion: @escaping ([[String]]) async -> Void) {
         Task {
             guard let filepath = Bundle.main.path(forResource: fileName, ofType: "csv") else {
@@ -38,6 +40,7 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
+    // TODO: 없어질 예정
     func loadBusStopData() {
         loadCSV(fileName: "BusStopData") { [weak self] parsedData in
             guard let self = self else { return }
@@ -45,6 +48,7 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
+    // TODO: api에서 제대로 된 coordinates를 제공하는지 확인해야함.
     func loadBusRouteCoordinateData() {
         loadCSV(fileName: "BusRouteCoordinates") { [weak self] parsedData in
             guard let self = self else { return }
@@ -53,6 +57,7 @@ final class BusSearchModel: ObservableObject {
     }
     
     
+    // TODO: api에 맞게 변경 필요
     @MainActor
     private func applyBusStopData(_ searchResponse: [[String]]) {
         for response in searchResponse {
@@ -79,6 +84,7 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
+    // TODO: 얘를 api 데이터에서 검색하는걸로 바꿔야함
     // MARK: 버스 데이터 검색 (버스 번호, 정류장 이름)
     func searchBusStops(byNumber number: String) {
         filteredBusDataForNumber = allBusData.filter { busStop in
