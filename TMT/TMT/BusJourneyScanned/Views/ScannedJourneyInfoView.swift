@@ -215,7 +215,7 @@ struct ScannedJourneyInfoView: View {
     }
     
     private func startLoadingTimeout() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 15.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             if isLoading {
                 stopLoadingWithError("Failed to load the image. Please try again.")
             }
