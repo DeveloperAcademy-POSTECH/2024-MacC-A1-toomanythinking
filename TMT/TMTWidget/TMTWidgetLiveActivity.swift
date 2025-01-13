@@ -161,8 +161,9 @@ struct BusJourneyLiveActivity: Widget {
             } compactLeading: { // MARK: Compact Leading
                 Image("LeadingLogo")
                     .resizable()
-                    .frame(width: 23, height: 23)
-                    .padding(.horizontal, 2)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 17)
+                    .padding(.horizontal, 9)
 
             } compactTrailing: { // MARK: Compact Trailing
                 Image("TrailingSmall")
