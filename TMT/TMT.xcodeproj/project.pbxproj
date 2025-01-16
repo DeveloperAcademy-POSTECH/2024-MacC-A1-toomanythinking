@@ -53,12 +53,14 @@
 		D82D29A52CD3AC8B0083BB59 /* OnboardingStepEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D29A42CD3AC8B0083BB59 /* OnboardingStepEnum.swift */; };
 		D83277652CEC67CE005E00CF /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83277642CEC67CE005E00CF /* LottieView.swift */; };
 		D836618D2CF9A892002A181F /* LaunchLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = D836618B2CF9A892002A181F /* LaunchLogo.png */; };
+		D836B9712D33A56000603DF5 /* BusStopListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D836B9702D33A56000603DF5 /* BusStopListItemView.swift */; };
+		D836B9732D33AA8300603DF5 /* JourneyStatusHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D836B9722D33AA8300603DF5 /* JourneyStatusHeaderView.swift */; };
 		D844BCBD2CC120010059E31F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D844BCBC2CC120010059E31F /* WidgetKit.framework */; };
 		D844BCBF2CC120010059E31F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D844BCBE2CC120010059E31F /* SwiftUI.framework */; };
 		D844BCD02CC120030059E31F /* TMTWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D844BCBA2CC120010059E31F /* TMTWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D844BCDA2CC147390059E31F /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D844BCD92CC147390059E31F /* LiveActivityManager.swift */; };
 		D858729C2CD4A15F001CC467 /* OnboardingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D858729B2CD4A15F001CC467 /* OnboardingStepView.swift */; };
-		D859D1512CEB2A6E00478166 /* BusStopsSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859D1502CEB2A6E00478166 /* BusStopsSheetView.swift */; };
+		D859D1512CEB2A6E00478166 /* MapBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D859D1502CEB2A6E00478166 /* MapBottomSheetView.swift */; };
 		D867396D2CA933CD00FFE8ED /* TMTApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D867396C2CA933CD00FFE8ED /* TMTApp.swift */; };
 		D86739712CA933CE00FFE8ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D86739702CA933CE00FFE8ED /* Assets.xcassets */; };
 		D86739742CA933CE00FFE8ED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D86739732CA933CE00FFE8ED /* Preview Assets.xcassets */; };
@@ -162,12 +164,14 @@
 		D82D29A42CD3AC8B0083BB59 /* OnboardingStepEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepEnum.swift; sourceTree = "<group>"; };
 		D83277642CEC67CE005E00CF /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		D836618B2CF9A892002A181F /* LaunchLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchLogo.png; sourceTree = "<group>"; };
+		D836B9702D33A56000603DF5 /* BusStopListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusStopListItemView.swift; sourceTree = "<group>"; };
+		D836B9722D33AA8300603DF5 /* JourneyStatusHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyStatusHeaderView.swift; sourceTree = "<group>"; };
 		D844BCBA2CC120010059E31F /* TMTWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TMTWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D844BCBC2CC120010059E31F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		D844BCBE2CC120010059E31F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		D844BCD92CC147390059E31F /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		D858729B2CD4A15F001CC467 /* OnboardingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepView.swift; sourceTree = "<group>"; };
-		D859D1502CEB2A6E00478166 /* BusStopsSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusStopsSheetView.swift; sourceTree = "<group>"; };
+		D859D1502CEB2A6E00478166 /* MapBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBottomSheetView.swift; sourceTree = "<group>"; };
 		D86739692CA933CD00FFE8ED /* TMT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D867396C2CA933CD00FFE8ED /* TMTApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMTApp.swift; sourceTree = "<group>"; };
 		D86739702CA933CE00FFE8ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -286,7 +290,9 @@
 		D801A1BD2CF22AA500AD0D64 /* BottomSheet */ = {
 			isa = PBXGroup;
 			children = (
-				D859D1502CEB2A6E00478166 /* BusStopsSheetView.swift */,
+				D859D1502CEB2A6E00478166 /* MapBottomSheetView.swift */,
+				D836B9722D33AA8300603DF5 /* JourneyStatusHeaderView.swift */,
+				D836B9702D33A56000603DF5 /* BusStopListItemView.swift */,
 			);
 			path = BottomSheet;
 			sourceTree = "<group>";
@@ -783,6 +789,7 @@
 				D876BF312CECE89E0098B68E /* OnboardingView.swift in Sources */,
 				D8BD64B72D265D7A00702C32 /* Font.swift in Sources */,
 				D8C5E7322D006D31005FE865 /* LoadingView.swift in Sources */,
+				D836B9732D33AA8300603DF5 /* JourneyStatusHeaderView.swift in Sources */,
 				5B64AF952CCF823D0083CA23 /* BusInfoEnum.swift in Sources */,
 				D82CB2342CFE103800A93217 /* UIApplication.swift in Sources */,
 				5BA06D4A2CF38E5400834BBD /* TappedStopView.swift in Sources */,
@@ -798,8 +805,9 @@
 				D88F3AF22CD34DD200C0B657 /* InformationModalView.swift in Sources */,
 				D8E054DE2CF1AF89006B1879 /* View.swift in Sources */,
 				D81D9D3C2CE21CD1004F2024 /* JourneySettingModel.swift in Sources */,
+				D836B9712D33A56000603DF5 /* BusStopListItemView.swift in Sources */,
 				5B2D9A182CCA36EA001FF6CC /* OCRProcessorManager.swift in Sources */,
-				D859D1512CEB2A6E00478166 /* BusStopsSheetView.swift in Sources */,
+				D859D1512CEB2A6E00478166 /* MapBottomSheetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

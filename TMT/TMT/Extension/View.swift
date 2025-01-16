@@ -15,7 +15,7 @@ enum Detents {
     var presentationDetent: PresentationDetent {
         switch self {
         case .small:
-            return .height(80)
+            return .height(64)
         case .middle:
             return .height(525)
         case .large:

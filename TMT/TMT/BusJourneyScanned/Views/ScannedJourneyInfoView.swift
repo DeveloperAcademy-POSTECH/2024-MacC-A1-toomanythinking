@@ -14,7 +14,7 @@ struct ScannedJourneyInfoView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var searchModel: BusSearchModel
     @EnvironmentObject var journeyModel: JourneySettingModel
-
+    
     @State private var tag: Int? = nil
     
     @State private var showingAlert: Bool = false
@@ -130,14 +130,14 @@ struct ScannedJourneyInfoView: View {
                                     endStopString: imageHandler.scannedJourneyInfo.endStop
                                 )
 
-                                guard let startStop = journeyModel.journeyStops.first else { return }
-                                guard let endStop = journeyModel.journeyStops.last else { return }
-
-                                cancellable = locationManager.$remainingStops
+                              guard let startStop = journeyModel.journeyStops.first else { return }
+                              guard let endStop = journeyModel.journeyStops.last else { return }
+                              
+                              cancellable = locationManager.$remainingStops
                                     .sink { newValue in
                                         if newValue != 0 {
                                             LiveActivityManager.shared.startLiveActivity(startBusStop: startStop, endBusStop: endStop, remainingStops: locationManager.remainingStops)
-
+                                            
                                             isLoading = false
                                             tag = 1
                                             path.append("BusStop")
@@ -200,7 +200,7 @@ struct ScannedJourneyInfoView: View {
             Text("\(title)")
                 .label1Medium()
                 .foregroundStyle(.grey300)
-          
+            
             TextField("\(scannedInfo.wrappedValue)", text: scannedInfo)
                 .font(.custom("Pretendard", size: 20).bold())
                 .foregroundStyle(.textDefault)
@@ -221,7 +221,7 @@ struct ScannedJourneyInfoView: View {
             }
         }
     }
-
+    
     private func stopLoadingWithError(_ message: String) {
         isLoading = false
         alertMessage = message
@@ -234,4 +234,6 @@ struct ScannedJourneyInfoView: View {
         .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
         .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
         .environmentObject(ImageHandlerModel())
+        .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
+        .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
 }

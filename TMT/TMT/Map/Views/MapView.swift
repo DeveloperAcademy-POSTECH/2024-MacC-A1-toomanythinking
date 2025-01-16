@@ -67,10 +67,8 @@ struct MapView: View {
             }
         }
         .environmentObject(selectedStopManager)
-        // TODO: 바텀시트 수정하기. 디테일 잡기
-        // TODO: 제일 작은 사이즈일 때는 정류장 안 보이도록 수정하기.
         .bottomSheet(isPresented: $isShowingBottomSheet) {
-            sheetView
+            MapBottomSheetView(path: $path)
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
@@ -111,65 +109,6 @@ struct MapView: View {
                     Image(systemName: "location.fill")
                         .foregroundStyle(.yellow500)
                 }
-        }
-    }
-    
-    // MARK: - Views / Bottom Sheet
-    private var sheetView: some View {
-        VStack(spacing: 3) {
-            Rectangle()
-                .frame(height: 100)
-                .foregroundStyle(.brandBackground)
-                .shadow(color: .basicBlack.opacity(0.25), radius: 2.5, y: 2)
-                .overlay {
-                    HStack(alignment: .bottom, spacing: 6) {
-                        Text("\(locationManager.remainingStops)")
-                            .title0SemiBold()
-                            .foregroundStyle(colors.leftStopNumberColor)
-
-                        Text("Stops Left")
-                            .title4()
-                            .foregroundStyle(.grey200)
-
-                        Spacer()
-                        
-                        endButton
-                    }
-                    .padding(.top, 26)
-                    .padding(.horizontal, 35)
-                    .padding(.bottom, 32)
-                }
-            
-            BusStopsSheetView()
-        }
-    }
-    
-    private var endButton: some View {
-        Button {
-            showingAlert = true
-        } label: {
-            Text("End")
-                .body1()
-                .foregroundStyle(.brandBackground)
-                .frame(width: 69, height: 38)
-                .background {
-                    RoundedRectangle(cornerRadius: 30)
-                        .foregroundStyle(.brandPrimary)
-                }
-        }
-        .alert("End Navigation", isPresented: $showingAlert) {
-            Button("Stay", role: .cancel) {
-                showingAlert = false
-            }
-
-            Button("End", role:.destructive) {
-                LiveActivityManager.shared.endLiveActivity()
-                imageHandler.selectedImage = nil
-                isShowingBottomSheet = false
-                path.removeAll()
-            }
-        } message: {
-            Text("Are you sure you want to end your navigation?")
         }
     }
     
