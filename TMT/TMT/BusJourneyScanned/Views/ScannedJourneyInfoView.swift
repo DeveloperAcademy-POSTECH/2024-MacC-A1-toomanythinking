@@ -10,6 +10,7 @@ import PhotosUI
 import SwiftUI
 
 struct ScannedJourneyInfoView: View {
+    @StateObject private var apiManager = TagoApiModel()
     @EnvironmentObject var imageHandler: ImageHandlerModel
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var searchModel: BusSearchModel

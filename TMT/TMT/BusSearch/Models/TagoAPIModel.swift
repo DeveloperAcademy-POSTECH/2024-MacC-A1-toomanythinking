@@ -7,10 +7,9 @@
 
 import Foundation
 
-class TagoAPIModel: NSObject, ObservableObject {
-//    private let apiKey =
-//    "pGhhz3Clzw%2FLuhS1oLNo3gX4JH%2F01HmgYdaafPhmVBGVcSNHu0hbmVRj5%2F3l%2Bf1qIz6RoMvdO2yfFIhAKa3ALg%3D%3D"
-
+class TagoApiModel: NSObject, ObservableObject {
+    @Published var busStopApiInfo: [BusStop] = []
+    
     private var currentElement = ""
     private var currentBusNumberId = ""
     private var currentStopNameKorean = ""
@@ -18,11 +17,8 @@ class TagoAPIModel: NSObject, ObservableObject {
     private var currentLatitude = ""
     private var currentLongitude = ""
     
-    @Published var busStopInfo: [BusStop] = []
-    
     func fetchData(cityCode: String, routeId: String, numOfRows: Int = 10, pageNo: Int = 1) {
         let apiKey = Bundle.main.object(forInfoDictionaryKey: "PUBLIC_DATA_PORTAL_API_KEY") as? String ?? ""
-        
         let urlString = """
             http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList?\
             serviceKey=\(apiKey)&cityCode=\(cityCode)&routeId=\(routeId)&numOfRows=\(numOfRows)&pageNo=\(pageNo)&_type=xml
@@ -34,7 +30,6 @@ class TagoAPIModel: NSObject, ObservableObject {
         }
         print("Generated URL: \(url)")
         
-        // URLSession으로 데이터 가져오기
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
@@ -64,7 +59,7 @@ class TagoAPIModel: NSObject, ObservableObject {
     }
 }
 
-extension TagoAPIModel: XMLParserDelegate {
+extension TagoApiModel: XMLParserDelegate {
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         currentElement = elementName
         print("started")
@@ -99,8 +94,8 @@ extension TagoAPIModel: XMLParserDelegate {
                 latitude: Double(currentLatitude),
                 longitude: Double(currentLongitude)
             )
-            busStopInfo.append(busStop)
-            print("busStopInfo: \(busStopInfo)")
+            busStopApiInfo.append(busStop)
+            print("busStopInfo: \(busStopApiInfo)")
             
             currentBusNumberId = ""
             currentStopNameKorean = ""
@@ -119,11 +114,11 @@ extension TagoAPIModel: XMLParserDelegate {
     }
 }
 
-
+// TODO: push 하기 전 삭제 필요
 import SwiftUI
 
 struct apiTest: View {
-    @StateObject private var apiManager = TagoAPIModel()
+    @StateObject private var apiManager = TagoApiModel()
     @State var isFetched: Bool = false
     
     var body: some View {
@@ -135,7 +130,7 @@ struct apiTest: View {
         }
         
         if isFetched {
-            Text("BusStopInfo: \(apiManager.busStopInfo)")
+            Text("BusStopInfo: \(apiManager.busStopApiInfo)")
         }
     }
 }
