@@ -7,38 +7,32 @@
 
 import Foundation
 
-class TagoAPIModel: NSObject, XMLParserDelegate {
-    // Define the API endpoint and parameters
-    private let apiKey = "pGhhz3Clzw%2FLuhS1oLNo3gX4JH%2F01HmgYdaafPhmVBGVcSNHu0hbmVRj5%2F3l%2Bf1qIz6RoMvdO2yfFIhAKa3ALg%3D%3D"
-    private let baseURL = "http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList"
+class TagoAPIModel: NSObject, ObservableObject {
+//    private let apiKey =
+//    "pGhhz3Clzw%2FLuhS1oLNo3gX4JH%2F01HmgYdaafPhmVBGVcSNHu0hbmVRj5%2F3l%2Bf1qIz6RoMvdO2yfFIhAKa3ALg%3D%3D"
+
+    private var currentElement = ""
+    private var currentBusNumberId = ""
+    private var currentStopNameKorean = ""
+    private var currentStopOrder = ""
+    private var currentLatitude = ""
+    private var currentLongitude = ""
     
-    // Variables to hold parsed XML data
-    private var currentElement: String = ""
-    private var parsedData: [String: String] = [:]
-    private var results: [[String: String]] = []
+    @Published var busStopInfo: [BusStop] = []
     
     func fetchData(cityCode: String, routeId: String, numOfRows: Int = 10, pageNo: Int = 1) {
-        // URLComponents 생성 및 매개변수 추가
-        guard var components = URLComponents(string: baseURL) else {
-            print("Invalid base URL")
-            return
-        }
+        let apiKey = Bundle.main.object(forInfoDictionaryKey: "PUBLIC_DATA_PORTAL_API_KEY") as? String ?? ""
         
-        // 기본 쿼리 매개변수 추가
-        components.queryItems = [
-            URLQueryItem(name: "serviceKey", value: apiKey),
-            URLQueryItem(name: "cityCode", value: cityCode),
-            URLQueryItem(name: "routeId", value: routeId),
-            URLQueryItem(name: "numOfRows", value: "\(numOfRows)"),
-            URLQueryItem(name: "pageNo", value: "\(pageNo)"),
-            URLQueryItem(name: "_type", value: "xml")
-        ]
+        let urlString = """
+            http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList?\
+            serviceKey=\(apiKey)&cityCode=\(cityCode)&routeId=\(routeId)&numOfRows=\(numOfRows)&pageNo=\(pageNo)&_type=xml
+            """
         
-        // URL 생성
-        guard let url = components.url else {
+        guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return
         }
+        print("Generated URL: \(url)")
         
         // URLSession으로 데이터 가져오기
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
@@ -52,41 +46,72 @@ class TagoAPIModel: NSObject, XMLParserDelegate {
                 return
             }
             
-            // XML 데이터 처리
+            print("Response Data: \(String(data: data, encoding: .utf8) ?? "N/A")")
             self.parseXML(data: data)
         }
         
         task.resume()
     }
     
-    // XML 데이터 파싱 (구체적인 로직은 XML 구조에 맞게 수정해야 함)
     private func parseXML(data: Data) {
         let parser = XMLParser(data: data)
-        parser.delegate = self // XMLParserDelegate 구현 필요
+        parser.delegate = self
         if parser.parse() {
             print("XML parsing succeeded")
         } else {
             print("XML parsing failed")
         }
     }
-    
-    // MARK: - XMLParserDelegate Methods
-    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String]) {
+}
+
+extension TagoAPIModel: XMLParserDelegate {
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         currentElement = elementName
+        print("started")
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedString.isEmpty {
-            parsedData[currentElement] = (parsedData[currentElement] ?? "") + trimmedString
+        guard !trimmedString.isEmpty else { return }
+        
+        switch currentElement {
+        case "routeid":
+            currentBusNumberId += trimmedString
+        case "nodenm":
+            currentStopNameKorean += trimmedString
+        case "nodeord":
+            currentStopOrder += trimmedString
+        case "gpslati":
+            currentLatitude += trimmedString
+        case "gpslong":
+            currentLongitude += trimmedString
+        default:
+            break
         }
     }
     
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if elementName == "desiredElement" { // Replace with the XML element you want to aggregate
-            results.append(parsedData)
-            parsedData = [:]
+        if elementName == "item" {
+            let busStop = BusStop(
+                busNumberId: currentBusNumberId,
+                stopOrder: Int(currentStopOrder),
+                stopNameKorean: currentStopNameKorean,
+                latitude: Double(currentLatitude),
+                longitude: Double(currentLongitude)
+            )
+            busStopInfo.append(busStop)
+            print("busStopInfo: \(busStopInfo)")
+            
+            currentBusNumberId = ""
+            currentStopNameKorean = ""
+            currentStopOrder = ""
+            currentLatitude = ""
+            currentLongitude = ""
         }
+    }
+    
+    func parserDidEndDocument(_ parser: XMLParser) {
+        print("Parsing finished.")
     }
     
     func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
@@ -94,6 +119,23 @@ class TagoAPIModel: NSObject, XMLParserDelegate {
     }
 }
 
-//// Usage example
-//let apiManager = TransportationAPIManager()
-//apiManager.fetchData(parameters: ["param1": "value1", "param2": "value2"])
+
+import SwiftUI
+
+struct apiTest: View {
+    @StateObject private var apiManager = TagoAPIModel()
+    @State var isFetched: Bool = false
+    
+    var body: some View {
+        Button {
+            apiManager.fetchData(cityCode: "37010", routeId: "PHB350000365")
+            isFetched = true
+        } label: {
+            Text("TEST")
+        }
+        
+        if isFetched {
+            Text("BusStopInfo: \(apiManager.busStopInfo)")
+        }
+    }
+}

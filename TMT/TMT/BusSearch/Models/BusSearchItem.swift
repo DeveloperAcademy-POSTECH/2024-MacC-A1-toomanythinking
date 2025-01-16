@@ -9,7 +9,9 @@ import Foundation
 
 struct BusStop: Codable, Identifiable {
     var id = UUID()
+    var busStopId: String?
     var busNumber: String? // 노선명 (버스번호)
+    var busNumberId: String?
     var busType: Int? // 버스 타입
     var stopOrder: Int? // 순번
     var stopNameKorean: String? // 정류장명 (한글)
