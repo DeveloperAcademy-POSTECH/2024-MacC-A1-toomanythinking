@@ -10,7 +10,7 @@ import PhotosUI
 import SwiftUI
 
 struct ScannedJourneyInfoView: View {
-    @StateObject private var apiManager = TagoApiModel()
+    @EnvironmentObject var apiManager: TagoApiModel
     @EnvironmentObject var imageHandler: ImageHandlerModel
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var searchModel: BusSearchModel
@@ -133,7 +133,9 @@ struct ScannedJourneyInfoView: View {
 
                               guard let startStop = journeyModel.journeyStops.first else { return }
                               guard let endStop = journeyModel.journeyStops.last else { return }
-                              
+                                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                                print("startStop: \(startStop)")
+                                print("endStop: \(endStop)")
                               cancellable = locationManager.$remainingStops
                                     .sink { newValue in
                                         if newValue != 0 {
@@ -232,9 +234,9 @@ struct ScannedJourneyInfoView: View {
 
 #Preview {
     ScannedJourneyInfoView(path: .constant(["ScannedJourneyInfoView"]))
-        .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
-        .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
+        .environmentObject(JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel()))
+        .environmentObject(LocationManager(journeyModel: JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel())))
         .environmentObject(ImageHandlerModel())
-        .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
-        .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
+        .environmentObject(JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel()))
+        .environmentObject(LocationManager(journeyModel: JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel())))
 }

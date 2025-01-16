@@ -13,8 +13,7 @@ struct TMTApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            HomeView()
-            apiTest()
+            HomeView()
         }
     }
 }

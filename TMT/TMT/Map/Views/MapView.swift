@@ -145,7 +145,8 @@ struct MapView: View {
 #Preview {
     // Mock 데이터 및 객체 초기화
     let searchModel = BusSearchModel()
-    let journeyModel = JourneySettingModel(searchModel: searchModel)
+    let apiModel = TagoApiModel()
+    let journeyModel = JourneySettingModel(apiManager: apiModel, searchModel: searchModel)
     let imageHandler = ImageHandlerModel()
     let locationManager = LocationManager(journeyModel: journeyModel)
     

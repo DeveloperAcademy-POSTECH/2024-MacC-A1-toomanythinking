@@ -60,8 +60,9 @@ struct MapBottomSheetView: View {
 }
 
 #Preview {
+    let apiModel = TagoApiModel()
     let searchModel = BusSearchModel()
-    let journeyModel = JourneySettingModel(searchModel: searchModel)
+    let journeyModel = JourneySettingModel(apiManager: apiModel, searchModel: searchModel)
     let locationManager = LocationManager(journeyModel: journeyModel)
     
     searchModel.filteredBusDataForNumber = BusStop.journeyStopDummy

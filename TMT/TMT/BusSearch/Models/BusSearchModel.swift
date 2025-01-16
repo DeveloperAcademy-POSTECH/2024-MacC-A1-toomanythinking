@@ -39,13 +39,12 @@ final class BusSearchModel: ObservableObject {
     }
     
     func loadBusStopData() {
-        loadCSV(fileName: "BusStopData") { [weak self] parsedData in
+        loadCSV(fileName: "test") { [weak self] parsedData in
             guard let self = self else { return }
             await self.applyBusStopData(parsedData)
         }
     }
     
-    // TODO: api에서 제대로 된 coordinates를 제공하는지 확인해야함.
     func loadBusRouteCoordinateData() {
         loadCSV(fileName: "BusRouteCoordinates") { [weak self] parsedData in
             guard let self = self else { return }
@@ -53,20 +52,16 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
-    
-    // TODO: api에 맞게 변경 필요
     @MainActor
     private func applyBusStopData(_ searchResponse: [[String]]) {
         for response in searchResponse {
-            self.allBusData.append(BusStop(busNumber: response[0].isEmpty ? nil : response[0],
-                                           busType: response[1].isEmpty ? nil : Int(response[1]),
-                                           stopOrder: response[2].isEmpty ? nil : Int(response[2]),
-                                           stopNameKorean: response[3].isEmpty ? nil : response[3],
+            self.allBusData.append(BusStop(busStopId: response[0].isEmpty ? nil : response[0],
+                                           busNumber: response[1].isEmpty ? nil : response[1],
+                                           busNumberId: response[2].isEmpty ? nil : response[2],
+                                           busType: response[3].isEmpty ? nil : Int(response[3]),
                                            stopNameRomanized: response[4].isEmpty ? nil : response[4],
                                            stopNameNaver: response[5].isEmpty ? nil : response[5],
-                                           stopNameTranslated: response[6].isEmpty ? nil : response[6],
-                                           latitude: response[7].isEmpty ? nil : Double(response[7]),
-                                           longitude: response[8].isEmpty ? nil : Double(response[8].dropLast(1))))
+                                           stopNameTranslated: response[6].isEmpty ? nil : response[6]))
         }
     }
     

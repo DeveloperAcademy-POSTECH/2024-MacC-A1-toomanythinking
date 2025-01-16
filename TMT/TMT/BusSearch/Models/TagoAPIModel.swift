@@ -12,12 +12,13 @@ class TagoApiModel: NSObject, ObservableObject {
     
     private var currentElement = ""
     private var currentBusNumberId = ""
+    private var currentBusStopId = ""
     private var currentStopNameKorean = ""
     private var currentStopOrder = ""
     private var currentLatitude = ""
     private var currentLongitude = ""
     
-    func fetchData(cityCode: String, routeId: String, numOfRows: Int = 10, pageNo: Int = 1) {
+    func fetchData(cityCode: String, routeId: String, numOfRows: Int = 500, pageNo: Int = 1) async {
         let apiKey = Bundle.main.object(forInfoDictionaryKey: "PUBLIC_DATA_PORTAL_API_KEY") as? String ?? ""
         let urlString = """
             http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList?\
@@ -28,24 +29,13 @@ class TagoApiModel: NSObject, ObservableObject {
             print("Invalid URL")
             return
         }
-        print("Generated URL: \(url)")
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let data = data else {
-                print("No data received")
-                return
-            }
-            
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
             print("Response Data: \(String(data: data, encoding: .utf8) ?? "N/A")")
             self.parseXML(data: data)
+        } catch {
+            print("Error fetching data: \(error.localizedDescription)")
         }
-        
-        task.resume()
     }
     
     private func parseXML(data: Data) {
@@ -62,7 +52,6 @@ class TagoApiModel: NSObject, ObservableObject {
 extension TagoApiModel: XMLParserDelegate {
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         currentElement = elementName
-        print("started")
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
@@ -72,6 +61,8 @@ extension TagoApiModel: XMLParserDelegate {
         switch currentElement {
         case "routeid":
             currentBusNumberId += trimmedString
+        case "nodeid":
+            currentBusStopId += trimmedString
         case "nodenm":
             currentStopNameKorean += trimmedString
         case "nodeord":
@@ -88,6 +79,7 @@ extension TagoApiModel: XMLParserDelegate {
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "item" {
             let busStop = BusStop(
+                busStopId: currentBusStopId,
                 busNumberId: currentBusNumberId,
                 stopOrder: Int(currentStopOrder),
                 stopNameKorean: currentStopNameKorean,
@@ -95,8 +87,9 @@ extension TagoApiModel: XMLParserDelegate {
                 longitude: Double(currentLongitude)
             )
             busStopApiInfo.append(busStop)
-            print("busStopInfo: \(busStopApiInfo)")
+            //            print("busStopInfo: \(busStopApiInfo)")
             
+            currentBusStopId = ""
             currentBusNumberId = ""
             currentStopNameKorean = ""
             currentStopOrder = ""
@@ -111,26 +104,5 @@ extension TagoApiModel: XMLParserDelegate {
     
     func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
         print("Parsing error: \(parseError.localizedDescription)")
-    }
-}
-
-// TODO: push 하기 전 삭제 필요
-import SwiftUI
-
-struct apiTest: View {
-    @StateObject private var apiManager = TagoApiModel()
-    @State var isFetched: Bool = false
-    
-    var body: some View {
-        Button {
-            apiManager.fetchData(cityCode: "37010", routeId: "PHB350000365")
-            isFetched = true
-        } label: {
-            Text("TEST")
-        }
-        
-        if isFetched {
-            Text("BusStopInfo: \(apiManager.busStopApiInfo)")
-        }
     }
 }

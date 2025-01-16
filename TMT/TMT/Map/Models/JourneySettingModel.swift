@@ -31,13 +31,17 @@ final class JourneySettingModel: ObservableObject {
     func setJourneyStops(busNumberString: String, startStopString: String, endStopString: String) {
         searchModel.searchBusStops(byNumber: busNumberString)
         busNumberId = searchModel.filteredBusDataForNumber.first?.busNumberId ?? ""
-        apiManager.fetchData(cityCode: "37010", routeId: busNumberId)
-        busStopInfo = mergeBusStops(busInfoCsv: searchModel.filteredBusDataForNumber, busInfoApi: apiManager.busStopApiInfo)
         
-        let startCandidates = searchBusStops(byName: startStopString)
-        let endCandidates = searchBusStops(byName: endStopString)
-        
-        findJourneyStopsSequence(from: startCandidates, to: endCandidates)
+        Task {
+            await apiManager.fetchData(cityCode: "37010", routeId: busNumberId)
+            busStopInfo = mergeBusStops(busInfoCsv: searchModel.filteredBusDataForNumber, busInfoApi: apiManager.busStopApiInfo)
+            
+            let startCandidates = searchBusStops(byName: startStopString)
+            let endCandidates = searchBusStops(byName: endStopString)
+            
+            findJourneyStopsSequence(from: startCandidates, to: endCandidates)
+            print("journeyStops: \(journeyStops)")
+        }
     }
     
     private func searchBusStops(byName name: String) -> [BusStop] {
@@ -111,24 +115,26 @@ final class JourneySettingModel: ObservableObject {
     }
     
     private func mergeBusStops(busInfoCsv: [BusStop], busInfoApi: [BusStop]) -> [BusStop] {
-        let apiDict = Dictionary(grouping: busInfoApi, by: { $0.busStopId ?? "" })
+        let apiArrayToDict = Dictionary(grouping: busInfoApi, by: { $0.busStopId ?? "" })
         var mergedBusStops: [BusStop] = []
+        print("================apiDict==================")
+        print("apiDict: \(apiArrayToDict)")
         
-        for csvStop in busInfoCsv {
-            guard let busStopId = csvStop.busStopId else { continue }
-            
-            if let matchingApiStops = apiDict[busStopId] {
-                for apiStop in matchingApiStops {
-                    var mergedStop = csvStop
-                    mergedStop.stopOrder = apiStop.stopOrder
-                    mergedStop.stopNameKorean = apiStop.stopNameKorean
-                    mergedStop.latitude = apiStop.latitude
-                    mergedStop.longitude = apiStop.longitude
+        for stopInCsv in busInfoCsv {
+            guard let busStopId = stopInCsv.busStopId else { continue }
+            print("busStopId: \(busStopId)")
+            if let matchingApiStops = apiArrayToDict[busStopId] {
+                for stopInApi in matchingApiStops {
+                    var mergedStop = stopInCsv
+                    mergedStop.stopOrder = stopInApi.stopOrder
+                    mergedStop.stopNameKorean = stopInApi.stopNameKorean
+                    mergedStop.latitude = stopInApi.latitude
+                    mergedStop.longitude = stopInApi.longitude
                     
                     mergedBusStops.append(mergedStop)
                 }
             } else {
-                mergedBusStops.append(csvStop)
+                mergedBusStops.append(stopInCsv)
             }
         }
         
