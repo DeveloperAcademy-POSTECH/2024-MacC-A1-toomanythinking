@@ -16,7 +16,7 @@ struct LoadingView: View {
             HStack {
                 Text(currentLoading.description)
                     .title1Bold()
-                    .foregroundStyle(.basicBlack)
+                    .foregroundStyle(.textDefault)
 
                 Spacer()
             }
