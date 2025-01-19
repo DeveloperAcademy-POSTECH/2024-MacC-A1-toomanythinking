@@ -31,7 +31,6 @@ class TagoApiModel: NSObject, ObservableObject {
         }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            print("Response Data: \(String(data: data, encoding: .utf8) ?? "N/A")")
             self.parseXML(data: data)
         } catch {
             print("Error fetching data: \(error.localizedDescription)")
@@ -86,8 +85,8 @@ extension TagoApiModel: XMLParserDelegate {
                 latitude: Double(currentLatitude),
                 longitude: Double(currentLongitude)
             )
-            busStopApiInfo.append(busStop)
-            //            print("busStopInfo: \(busStopApiInfo)")
+            
+            self.busStopApiInfo.append(busStop)
             
             currentBusStopId = ""
             currentBusNumberId = ""

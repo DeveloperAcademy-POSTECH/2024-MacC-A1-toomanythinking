@@ -10,6 +10,7 @@ import SwiftUI
 struct MapBottomSheetView: View {
     @EnvironmentObject var searchModel: BusSearchModel
     @EnvironmentObject var journeyModel: JourneySettingModel
+    @EnvironmentObject var locationManager: LocationManager
     
     @Binding var path: [String]
     
@@ -35,7 +36,7 @@ struct MapBottomSheetView: View {
             }
             
             // TODO: 현재 정류장 표시
-            ForEach(searchModel.filteredBusDataForNumber) { stop in
+            ForEach(journeyModel.busStopInfo) { stop in
                 let isPartOfJourney = journeyModel.journeyStops.contains { $0.stopOrder == stop.stopOrder }
                 
                 BusStopListItemView(stop: stop, isPartOfJourney: isPartOfJourney)
@@ -54,7 +55,7 @@ struct MapBottomSheetView: View {
         if journeyModel.journeyStops.last != nil {
             LiveActivityManager.shared.endLiveActivity()
         }
-        
+        locationManager.remainingStops = 0
         path.removeAll()
     }
 }

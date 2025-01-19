@@ -20,4 +20,7 @@ struct BusStop: Codable, Identifiable {
     var stopNameTranslated: String? // 정류장명 (직접 번역한 이름)
     var latitude: Double? // x좌표
     var longitude: Double? // y좌표
+    var cityCode: String? // 도시 코드
+    var cityName: String? // 도시 이름
+    var routeDetail: String? // 버스 루트에 대한 상세 정보 (ex. 자명 경유 등)
 }

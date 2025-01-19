@@ -17,7 +17,6 @@ final class JourneySettingModel: ObservableObject {
     
     private var startStop: BusStop?
     private var endStop: BusStop?
-    private var busNumberId: String = ""
     
     @Published var closestStop: BusStop?
     @Published var lastPassedStopIndex: Int = -1
@@ -28,25 +27,47 @@ final class JourneySettingModel: ObservableObject {
     }
     
     // MARK: 출발 및 하차 정류장 설정
-    func setJourneyStops(busNumberString: String, startStopString: String, endStopString: String) {
+    func setJourneyStops(busNumberString: String, startStopString: String, endStopString: String, completion: @escaping () -> Void) {
         searchModel.searchBusStops(byNumber: busNumberString)
-        busNumberId = searchModel.filteredBusDataForNumber.first?.busNumberId ?? ""
+        searchModel.searchRouteCoordinates(byNumber: busNumberString)
         
         Task {
-            await apiManager.fetchData(cityCode: "37010", routeId: busNumberId)
-            busStopInfo = mergeBusStops(busInfoCsv: searchModel.filteredBusDataForNumber, busInfoApi: apiManager.busStopApiInfo)
+            guard let busData = searchModel.filteredBusDataForNumber.first else {
+                print("Error: No matching bus data found.")
+                return
+            }
+            print("1")
+            await apiManager.fetchData(cityCode: busData.cityCode ?? "", routeId: busData.busNumberId ?? "")
+            busStopInfo = mergeBusStops(busInfoCsv: searchModel.allStopData, busInfoApi: apiManager.busStopApiInfo)
+            print("2")
+//            let mergedStops = mergeBusStops(busInfoCsv: searchModel.allStopData, busInfoApi: apiManager.busStopApiInfo)
+            print("3")
+//            print("merged: \(mergedStops)")
+//            print("allstopdata: \(searchModel.allStopData)")
+            print("busstopaipinfo: \(apiManager.busStopApiInfo)")
+//                    DispatchQueue.main.async {
+//                        print("4")
+//                        self.busStopInfo = mergedStops
+//                    }
+            print("5")
             
+            print("tjfak: \(startStopString), \(endStopString)")
             let startCandidates = searchBusStops(byName: startStopString)
             let endCandidates = searchBusStops(byName: endStopString)
-            
+            print("6")
+            print("startCandidates: \(startCandidates)")
+            print("endCandidates: \(endCandidates)")
             findJourneyStopsSequence(from: startCandidates, to: endCandidates)
+            print("7")
             print("journeyStops: \(journeyStops)")
+            completion()
         }
     }
     
     private func searchBusStops(byName name: String) -> [BusStop] {
         return busStopInfo.filter {
-            name.contains($0.stopNameNaver ?? "") || name.contains($0.stopNameKorean ?? "")
+            let cleanedStopName = $0.stopNameNaver?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+            return name.lowercased().contains(cleanedStopName) || name.contains($0.stopNameKorean ?? "")
         }
     }
     
@@ -114,30 +135,36 @@ final class JourneySettingModel: ObservableObject {
         return (remainingStops, currentStop)
     }
     
+    /// BusStopData csv 파일의 데이터와 api 데이터를 합칩니다.
     private func mergeBusStops(busInfoCsv: [BusStop], busInfoApi: [BusStop]) -> [BusStop] {
-        let apiArrayToDict = Dictionary(grouping: busInfoApi, by: { $0.busStopId ?? "" })
-        var mergedBusStops: [BusStop] = []
-        print("================apiDict==================")
-        print("apiDict: \(apiArrayToDict)")
-        
-        for stopInCsv in busInfoCsv {
-            guard let busStopId = stopInCsv.busStopId else { continue }
-            print("busStopId: \(busStopId)")
-            if let matchingApiStops = apiArrayToDict[busStopId] {
-                for stopInApi in matchingApiStops {
-                    var mergedStop = stopInCsv
-                    mergedStop.stopOrder = stopInApi.stopOrder
-                    mergedStop.stopNameKorean = stopInApi.stopNameKorean
-                    mergedStop.latitude = stopInApi.latitude
-                    mergedStop.longitude = stopInApi.longitude
-                    
-                    mergedBusStops.append(mergedStop)
-                }
-            } else {
-                mergedBusStops.append(stopInCsv)
-            }
-        }
-        
-        return mergedBusStops
+        let csvArrayToDict = Dictionary(grouping: busInfoCsv, by: { $0.busStopId ?? "" })
+           var mergedBusStops: [BusStop] = []
+
+           for stopInApi in busInfoApi {
+//               print("busInfoApi: \(busInfoApi)")
+               guard let busStopId = stopInApi.busStopId else { continue }
+               print("=-0=-0=-0000000000000000000000000000000000000")
+//               print("busStopId: \(busStopId)")
+               if let matchingCsvStops = csvArrayToDict[busStopId] {
+                   for stopInCsv in matchingCsvStops {
+                       var mergedStop = stopInApi
+                       
+                       mergedStop.busNumber = stopInCsv.busNumber
+                       mergedStop.busNumberId = stopInCsv.busNumberId
+                       mergedStop.stopNameRomanized = stopInCsv.stopNameRomanized
+                       mergedStop.stopNameNaver = stopInCsv.stopNameNaver
+                       mergedStop.stopNameTranslated = stopInCsv.stopNameTranslated
+
+                       mergedBusStops.append(mergedStop)
+//                       print("mergedBusStops: \(mergedBusStops)")
+                   }
+               } else {
+                   mergedBusStops.append(stopInApi)
+//                   print("mergedBusStops222222: \(mergedBusStops)")
+               }
+           }
+        print("==================")
+//        print("mergedBusStops: \(mergedBusStops)")
+           return mergedBusStops
     }
 }

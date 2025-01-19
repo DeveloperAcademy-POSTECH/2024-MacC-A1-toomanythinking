@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TappedStopView: View {
-    @EnvironmentObject var searchModel: BusSearchModel
+    @EnvironmentObject var journeyModel: JourneySettingModel
     @EnvironmentObject var selectedStopManager: SelectedStopManager
     
     @State private var stopOrder: Int? = 0
@@ -37,7 +37,7 @@ struct TappedStopView: View {
         .onAppear {
             updateStateOrder()
             if let stopOrder = stopOrder {
-                tappedStop = searchModel.filteredBusDataForNumber[stopOrder]
+                tappedStop = journeyModel.busStopInfo[stopOrder]
             } else {
                 print("Error is occured. Please try again.")
             }

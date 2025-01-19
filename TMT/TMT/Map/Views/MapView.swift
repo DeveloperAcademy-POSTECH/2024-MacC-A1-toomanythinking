@@ -76,8 +76,8 @@ struct MapView: View {
                 locationManager.findCurrentLocation()
             }
             
-            searchModel.searchBusStops(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
-            searchModel.searchRouteCoordinates(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
+//            searchModel.searchBusStops(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
+//            searchModel.searchRouteCoordinates(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
             
             busRouteCoordinates = journeyRouteCoordinates()
             endStop = journeyModel.journeyStops.last ?? BusStop()
@@ -93,7 +93,7 @@ struct MapView: View {
     }
     // MARK: - Views / Map
     private var mapViewWrapper: some View {
-        MapViewWrapper(selectedStopManager: selectedStopManager, isUpdateRequested: $isUpdateRequested, region: $locationManager.region, busStopCoordinates: searchModel.filteredBusDataForNumber, busRouteCoordinates: busRouteCoordinates)
+        MapViewWrapper(selectedStopManager: selectedStopManager, isUpdateRequested: $isUpdateRequested, region: $locationManager.region, busStopCoordinates: journeyModel.busStopInfo, busRouteCoordinates: busRouteCoordinates)
     }
     
     private var myLocationButton: some View {
