@@ -76,9 +76,6 @@ struct MapView: View {
                 locationManager.findCurrentLocation()
             }
             
-//            searchModel.searchBusStops(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
-//            searchModel.searchRouteCoordinates(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
-            
             busRouteCoordinates = journeyRouteCoordinates()
             endStop = journeyModel.journeyStops.last ?? BusStop()
             colors = mainColor(remainingStops: locationManager.remainingStops)

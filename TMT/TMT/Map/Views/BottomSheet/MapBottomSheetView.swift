@@ -55,7 +55,10 @@ struct MapBottomSheetView: View {
         if journeyModel.journeyStops.last != nil {
             LiveActivityManager.shared.endLiveActivity()
         }
+        
         locationManager.remainingStops = 0
+        journeyModel.journeyStops = []
+        journeyModel.busStopInfo = []
         path.removeAll()
     }
 }

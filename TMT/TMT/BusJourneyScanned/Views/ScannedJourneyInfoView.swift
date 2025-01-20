@@ -122,7 +122,6 @@ struct ScannedJourneyInfoView: View {
                     FilledButton(title: "Start",
                                  fillColor: imageHandler.showAlertText ? .grey100 : .brandPrimary) {
                         isLoading = true
-//                        locationManager.remainingStops = 0
                         Task {
                             await NotificationManager.shared.requestNotificationPermission()
                             if !imageHandler.showAlertText {
@@ -131,10 +130,6 @@ struct ScannedJourneyInfoView: View {
                                     startStopString: imageHandler.scannedJourneyInfo.startStop,
                                     endStopString: imageHandler.scannedJourneyInfo.endStop
                                 ) {
-                                    print("isLoading: \(isLoading)")
-                                    print("startStop: \(journeyModel.journeyStops.first)")
-                                    print("endStop: \(journeyModel.journeyStops.last)")
-                                    print("journeyStops: \(journeyModel.journeyStops)")
                                     guard let startStop = journeyModel.journeyStops.first,
                                           let endStop = journeyModel.journeyStops.last else {
                                         isLoading = false
@@ -154,9 +149,6 @@ struct ScannedJourneyInfoView: View {
                             }
                         }
                     }
-                                 .onAppear {
-                                     journeyModel.journeyStops = []
-                                 }
                                  .disabled(imageHandler.showAlertText)
                                  .onChange(of: isLoading) { newValue in
                                      if newValue {

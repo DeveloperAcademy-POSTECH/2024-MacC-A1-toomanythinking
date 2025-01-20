@@ -36,30 +36,16 @@ final class JourneySettingModel: ObservableObject {
                 print("Error: No matching bus data found.")
                 return
             }
-            print("1")
+            
             await apiManager.fetchData(cityCode: busData.cityCode ?? "", routeId: busData.busNumberId ?? "")
             busStopInfo = mergeBusStops(busInfoCsv: searchModel.allStopData, busInfoApi: apiManager.busStopApiInfo)
-            print("2")
-//            let mergedStops = mergeBusStops(busInfoCsv: searchModel.allStopData, busInfoApi: apiManager.busStopApiInfo)
-            print("3")
-//            print("merged: \(mergedStops)")
-//            print("allstopdata: \(searchModel.allStopData)")
-            print("busstopaipinfo: \(apiManager.busStopApiInfo)")
-//                    DispatchQueue.main.async {
-//                        print("4")
-//                        self.busStopInfo = mergedStops
-//                    }
-            print("5")
+            apiManager.busStopApiInfo = []
+//            print("busStopInfo: \(busStopInfo)")
             
-            print("tjfak: \(startStopString), \(endStopString)")
             let startCandidates = searchBusStops(byName: startStopString)
             let endCandidates = searchBusStops(byName: endStopString)
-            print("6")
-            print("startCandidates: \(startCandidates)")
-            print("endCandidates: \(endCandidates)")
+            
             findJourneyStopsSequence(from: startCandidates, to: endCandidates)
-            print("7")
-            print("journeyStops: \(journeyStops)")
             completion()
         }
     }
@@ -130,7 +116,6 @@ final class JourneySettingModel: ObservableObject {
                 break
             }
         }
-        
         let remainingStops = max(0, journeyStops.count - lastPassedStopIndex - 1)
         return (remainingStops, currentStop)
     }
@@ -141,10 +126,8 @@ final class JourneySettingModel: ObservableObject {
            var mergedBusStops: [BusStop] = []
 
            for stopInApi in busInfoApi {
-//               print("busInfoApi: \(busInfoApi)")
                guard let busStopId = stopInApi.busStopId else { continue }
-               print("=-0=-0=-0000000000000000000000000000000000000")
-//               print("busStopId: \(busStopId)")
+               
                if let matchingCsvStops = csvArrayToDict[busStopId] {
                    for stopInCsv in matchingCsvStops {
                        var mergedStop = stopInApi
@@ -156,15 +139,11 @@ final class JourneySettingModel: ObservableObject {
                        mergedStop.stopNameTranslated = stopInCsv.stopNameTranslated
 
                        mergedBusStops.append(mergedStop)
-//                       print("mergedBusStops: \(mergedBusStops)")
                    }
                } else {
                    mergedBusStops.append(stopInApi)
-//                   print("mergedBusStops222222: \(mergedBusStops)")
                }
            }
-        print("==================")
-//        print("mergedBusStops: \(mergedBusStops)")
            return mergedBusStops
     }
 }
