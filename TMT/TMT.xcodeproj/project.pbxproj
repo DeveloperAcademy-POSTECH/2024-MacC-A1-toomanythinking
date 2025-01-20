@@ -28,7 +28,6 @@
 		5B8FAE272D394C0300D21D9F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5B8FAE262D394C0300D21D9F /* Config.xcconfig */; };
 		5B8FAE282D394C0300D21D9F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5B8FAE262D394C0300D21D9F /* Config.xcconfig */; };
 		5B8FAE292D394C0300D21D9F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5B8FAE262D394C0300D21D9F /* Config.xcconfig */; };
-		5B8FAE732D3988B900D21D9F /* test.csv in Resources */ = {isa = PBXBuildFile; fileRef = 5B8FAE722D3988B900D21D9F /* test.csv */; };
 		5B93E9D22D2FBFBB00F62511 /* TagoAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B93E9D12D2FBFAB00F62511 /* TagoAPIModel.swift */; };
 		5BA06D4A2CF38E5400834BBD /* TappedStopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA06D492CF38E1F00834BBD /* TappedStopView.swift */; };
 		5BA06D4C2CF3A63000834BBD /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA06D4B2CF3A61C00834BBD /* PopoverView.swift */; };
@@ -148,7 +147,6 @@
 		5B83D51D2CD7D80900633B3C /* NotUploadedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotUploadedView.swift; sourceTree = "<group>"; };
 		5B85B1C12CD91CC000469D03 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		5B8FAE262D394C0300D21D9F /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		5B8FAE722D3988B900D21D9F /* test.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.csv; sourceTree = "<group>"; };
 		5B93E9D12D2FBFAB00F62511 /* TagoAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagoAPIModel.swift; sourceTree = "<group>"; };
 		5BA06D492CF38E1F00834BBD /* TappedStopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TappedStopView.swift; sourceTree = "<group>"; };
 		5BA06D4B2CF3A61C00834BBD /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 			isa = PBXGroup;
 			children = (
 				D801A1B92CF2213C00AD0D64 /* BusDataMock.swift */,
-				5B8FAE722D3988B900D21D9F /* test.csv */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -743,7 +740,6 @@
 				D80EFF0F2D26584200AC45C9 /* Pretendard-Bold.otf in Resources */,
 				D80EFF102D26584200AC45C9 /* Pretendard-Regular.otf in Resources */,
 				D80EFF112D26584200AC45C9 /* Pretendard-SemiBold.otf in Resources */,
-				5B8FAE732D3988B900D21D9F /* test.csv in Resources */,
 				D80EFF122D26584200AC45C9 /* Pretendard-Medium.otf in Resources */,
 				5B63ED8E2D3AC72500235BF0 /* BusNumbers.csv in Resources */,
 				D8A1C0982CFA1B5C007D9F3F /* IntroFinishDark.json in Resources */,
