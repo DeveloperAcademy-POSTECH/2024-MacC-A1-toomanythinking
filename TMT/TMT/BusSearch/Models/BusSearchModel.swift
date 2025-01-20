@@ -96,7 +96,7 @@ final class BusSearchModel: ObservableObject {
     }
     
     // MARK: 버스 데이터 검색 (버스 번호)
-    func searchBusStops(byNumber number: String) {
+    func searchBusNumber(byNumber number: String) {
         filteredBusDataForNumber = allBusNumberData.filter { busStop in
             if let busNumber = busStop.busNumber {
                 return busNumber.contains(number)
