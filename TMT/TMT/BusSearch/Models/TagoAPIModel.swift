@@ -29,6 +29,7 @@ class TagoApiModel: NSObject, ObservableObject {
             print("Invalid URL")
             return
         }
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             self.parseXML(data: data)
@@ -85,9 +86,9 @@ extension TagoApiModel: XMLParserDelegate {
                 latitude: Double(currentLatitude),
                 longitude: Double(currentLongitude)
             )
-            
-            self.busStopApiInfo.append(busStop)
-            
+            DispatchQueue.main.async {
+                self.busStopApiInfo.append(busStop)
+            }
             currentBusStopId = ""
             currentBusNumberId = ""
             currentStopNameKorean = ""

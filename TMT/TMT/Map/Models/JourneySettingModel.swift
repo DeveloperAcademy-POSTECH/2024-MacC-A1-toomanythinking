@@ -31,16 +31,16 @@ final class JourneySettingModel: ObservableObject {
         searchModel.searchBusStops(byNumber: busNumberString)
         searchModel.searchRouteCoordinates(byNumber: busNumberString)
         
-        Task {
+        Task { @MainActor in
             guard let busData = searchModel.filteredBusDataForNumber.first else {
                 print("Error: No matching bus data found.")
                 return
             }
             
             await apiManager.fetchData(cityCode: busData.cityCode ?? "", routeId: busData.busNumberId ?? "")
+            
             busStopInfo = mergeBusStops(busInfoCsv: searchModel.allStopData, busInfoApi: apiManager.busStopApiInfo)
             apiManager.busStopApiInfo = []
-//            print("busStopInfo: \(busStopInfo)")
             
             let startCandidates = searchBusStops(byName: startStopString)
             let endCandidates = searchBusStops(byName: endStopString)
