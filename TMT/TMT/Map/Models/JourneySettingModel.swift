@@ -28,7 +28,7 @@ final class JourneySettingModel: ObservableObject {
     
     // MARK: 출발 및 하차 정류장 설정
     func setJourneyStops(busNumberString: String, startStopString: String, endStopString: String, completion: @escaping () -> Void) {
-        searchModel.searchBusStops(byNumber: busNumberString)
+        searchModel.searchBusNumber(byNumber: busNumberString)
         searchModel.searchRouteCoordinates(byNumber: busNumberString)
         
         Task { @MainActor in
