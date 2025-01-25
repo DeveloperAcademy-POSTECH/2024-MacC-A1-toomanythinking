@@ -10,6 +10,7 @@ import SwiftUI
 struct MapBottomSheetView: View {
     @EnvironmentObject var searchModel: BusSearchModel
     @EnvironmentObject var journeyModel: JourneySettingModel
+    @EnvironmentObject var locationManager: LocationManager
     
     @Binding var path: [String]
     
@@ -35,7 +36,7 @@ struct MapBottomSheetView: View {
             }
             
             // TODO: 현재 정류장 표시
-            ForEach(searchModel.filteredBusDataForNumber) { stop in
+            ForEach(journeyModel.busStopInfo) { stop in
                 let isPartOfJourney = journeyModel.journeyStops.contains { $0.stopOrder == stop.stopOrder }
                 
                 BusStopListItemView(stop: stop, isPartOfJourney: isPartOfJourney)
@@ -55,13 +56,17 @@ struct MapBottomSheetView: View {
             LiveActivityManager.shared.endLiveActivity()
         }
         
+        locationManager.remainingStops = 0
+        journeyModel.journeyStops = []
+        journeyModel.busStopInfo = []
         path.removeAll()
     }
 }
 
 #Preview {
+    let apiModel = TagoApiModel()
     let searchModel = BusSearchModel()
-    let journeyModel = JourneySettingModel(searchModel: searchModel)
+    let journeyModel = JourneySettingModel(apiManager: apiModel, searchModel: searchModel)
     let locationManager = LocationManager(journeyModel: journeyModel)
     
     searchModel.filteredBusDataForNumber = BusStop.journeyStopDummy

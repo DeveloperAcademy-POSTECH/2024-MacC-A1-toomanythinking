@@ -10,6 +10,7 @@ import PhotosUI
 import SwiftUI
 
 struct ScannedJourneyInfoView: View {
+    @EnvironmentObject var apiManager: TagoApiModel
     @EnvironmentObject var imageHandler: ImageHandlerModel
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var searchModel: BusSearchModel
@@ -34,7 +35,7 @@ struct ScannedJourneyInfoView: View {
         ZStack {
             Color.brandBackground
                 .ignoresSafeArea()
-
+            
             VStack(spacing: 16) {
                 ScrollView(showsIndicators: false) {
                     if !imageHandler.showAlertScreen {
@@ -42,15 +43,15 @@ struct ScannedJourneyInfoView: View {
                     } else {
                         UploadedPhotoView(selectedImage: .constant(nil))
                     }
-
+                    
                     uploadedInfoBox(title: "Departure Stop", scannedInfo: $imageHandler.scannedJourneyInfo.startStop)
-
+                    
                     uploadedInfoBox(title: "Bus Number", scannedInfo: $imageHandler.scannedJourneyInfo.busNumber)
-
+                    
                     uploadedInfoBox(title: "Arrival Stop", scannedInfo: $imageHandler.scannedJourneyInfo.endStop)
-
+                    
                 }
-
+                
                 if imageHandler.showAlertText {
                     HStack {
                         VStack {
@@ -68,7 +69,7 @@ struct ScannedJourneyInfoView: View {
                     .frame(height: 42)
                     .foregroundStyle(.red600)
                 }
-
+                
                 HStack(spacing: 0) {
                     Group {
                         if imageHandler.showAlertText {
@@ -93,7 +94,7 @@ struct ScannedJourneyInfoView: View {
                             Text("Cancel")
                                 .foregroundStyle(.blue)
                         }
-
+                        
                         Button {
                             showingAlert = false
                             showingPhotosPicker = true
@@ -105,7 +106,7 @@ struct ScannedJourneyInfoView: View {
                     } message: {
                         Text("The previously uploaded image information will disappear. Do you want to proceed?")
                     }
-
+                    
                     PhotosPicker(selection: $pickedItem, matching: .screenshots) {
                         EmptyView()
                     }
@@ -113,11 +114,11 @@ struct ScannedJourneyInfoView: View {
                         imageHandler.loadImageByPhotosPickerItem(from: pickedItem, viewCategory: "ScannedJourneyInfoView", completion: {})
                     }
                     .photosPicker(isPresented: $showingPhotosPicker, selection: $pickedItem, matching: .screenshots)
-
+                    
                     NavigationLink(destination: MapView(path: $path), tag: 1, selection: $tag) {
                         EmptyView()
                     }
-
+                    
                     FilledButton(title: "Start",
                                  fillColor: imageHandler.showAlertText ? .grey100 : .brandPrimary) {
                         isLoading = true
@@ -128,30 +129,26 @@ struct ScannedJourneyInfoView: View {
                                     busNumberString: imageHandler.scannedJourneyInfo.busNumber,
                                     startStopString: imageHandler.scannedJourneyInfo.startStop,
                                     endStopString: imageHandler.scannedJourneyInfo.endStop
-                                )
-
-                              guard let startStop = journeyModel.journeyStops.first else { return }
-                              guard let endStop = journeyModel.journeyStops.last else { return }
-                              
-                              cancellable = locationManager.$remainingStops
-                                    .sink { newValue in
+                                ) {
+                                    guard let startStop = journeyModel.journeyStops.first,
+                                          let endStop = journeyModel.journeyStops.last else {
+                                        isLoading = false
+                                        return
+                                    }
+                                    
+                                    cancellable = locationManager.$remainingStops.sink { newValue in
                                         if newValue != 0 {
                                             LiveActivityManager.shared.startLiveActivity(startBusStop: startStop, endBusStop: endStop, remainingStops: locationManager.remainingStops)
-                                            
-                                            isLoading = false
                                             tag = 1
                                             path.append("BusStop")
-
+                                            isLoading = false
                                             cancellable?.cancel()
                                         }
                                     }
+                                }
                             }
                         }
                     }
-                                 .onAppear {
-                                     journeyModel.journeyStops = []
-                                     locationManager.remainingStops = 0
-                                 }
                                  .disabled(imageHandler.showAlertText)
                                  .onChange(of: isLoading) { newValue in
                                      if newValue {
@@ -160,7 +157,7 @@ struct ScannedJourneyInfoView: View {
                                  }
                                  .alert(isPresented: $showingLoadingAlert) {
                                      Alert(
-                                        title: Text("Error!"),
+                                        title: Text("Sorry, no route available."),
                                         message: Text(alertMessage),
                                         dismissButton: .default(Text("Okay")) {
                                         }
@@ -215,9 +212,9 @@ struct ScannedJourneyInfoView: View {
     }
     
     private func startLoadingTimeout() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 15.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             if isLoading {
-                stopLoadingWithError("Failed to load the image. Please try again.")
+                stopLoadingWithError("Please make sure the information you entered is correct.")
             }
         }
     }
@@ -231,9 +228,9 @@ struct ScannedJourneyInfoView: View {
 
 #Preview {
     ScannedJourneyInfoView(path: .constant(["ScannedJourneyInfoView"]))
-        .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
-        .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
+        .environmentObject(JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel()))
+        .environmentObject(LocationManager(journeyModel: JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel())))
         .environmentObject(ImageHandlerModel())
-        .environmentObject(JourneySettingModel(searchModel: BusSearchModel()))
-        .environmentObject(LocationManager(journeyModel: JourneySettingModel(searchModel: BusSearchModel())))
+        .environmentObject(JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel()))
+        .environmentObject(LocationManager(journeyModel: JourneySettingModel(apiManager: TagoApiModel(), searchModel: BusSearchModel())))
 }

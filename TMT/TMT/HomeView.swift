@@ -10,6 +10,7 @@ import PhotosUI
 
 struct HomeView: View {
     @AppStorage("shouldShowOnboarding") var shouldShowOnboarding = true
+    @StateObject private var apiModel: TagoApiModel
     @StateObject private var journeyModel: JourneySettingModel
     @StateObject private var imageHandler: ImageHandlerModel = ImageHandlerModel()
     @StateObject private var locationManager: LocationManager
@@ -20,9 +21,11 @@ struct HomeView: View {
     @State var path: [String] = []
     
     init() {
+        let apiModel = TagoApiModel()
         let searchModel = BusSearchModel()
-        let journeyModel = JourneySettingModel(searchModel: searchModel)
+        let journeyModel = JourneySettingModel(apiManager: apiModel, searchModel: searchModel)
         
+        _apiModel = StateObject(wrappedValue: apiModel)
         _searchModel = StateObject(wrappedValue: searchModel)
         _journeyModel = StateObject(wrappedValue: journeyModel)
         _locationManager = StateObject(wrappedValue: LocationManager(journeyModel: journeyModel))

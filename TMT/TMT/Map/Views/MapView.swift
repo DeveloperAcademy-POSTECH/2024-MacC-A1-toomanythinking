@@ -76,9 +76,6 @@ struct MapView: View {
                 locationManager.findCurrentLocation()
             }
             
-            searchModel.searchBusStops(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
-            searchModel.searchRouteCoordinates(byNumber: journeyModel.journeyStops.first?.busNumber ?? "")
-            
             busRouteCoordinates = journeyRouteCoordinates()
             endStop = journeyModel.journeyStops.last ?? BusStop()
             colors = mainColor(remainingStops: locationManager.remainingStops)
@@ -93,7 +90,7 @@ struct MapView: View {
     }
     // MARK: - Views / Map
     private var mapViewWrapper: some View {
-        MapViewWrapper(selectedStopManager: selectedStopManager, isUpdateRequested: $isUpdateRequested, region: $locationManager.region, busStopCoordinates: searchModel.filteredBusDataForNumber, busRouteCoordinates: busRouteCoordinates)
+        MapViewWrapper(selectedStopManager: selectedStopManager, isUpdateRequested: $isUpdateRequested, region: $locationManager.region, busStopCoordinates: journeyModel.busStopInfo, busRouteCoordinates: busRouteCoordinates)
     }
     
     private var myLocationButton: some View {
@@ -145,7 +142,8 @@ struct MapView: View {
 #Preview {
     // Mock 데이터 및 객체 초기화
     let searchModel = BusSearchModel()
-    let journeyModel = JourneySettingModel(searchModel: searchModel)
+    let apiModel = TagoApiModel()
+    let journeyModel = JourneySettingModel(apiManager: apiModel, searchModel: searchModel)
     let imageHandler = ImageHandlerModel()
     let locationManager = LocationManager(journeyModel: journeyModel)
     

@@ -8,7 +8,8 @@
 import Foundation
 
 final class BusSearchModel: ObservableObject {
-    @Published var allBusData: [BusStop] = []
+    @Published var allStopData: [BusStop] = []
+    @Published var allBusNumberData: [BusStop] = []
     @Published var filteredBusDataForNumber: [BusStop] = []
     @Published var filteredRouteCoordinates: [Coordinate] = []
     
@@ -16,6 +17,7 @@ final class BusSearchModel: ObservableObject {
     
     init() {
         loadBusStopData()
+        loadBusNumberData()
         loadBusRouteCoordinateData()
     }
     
@@ -45,6 +47,13 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
+    func loadBusNumberData() {
+        loadCSV(fileName: "BusNumbers") { [weak self] parsedData in
+            guard let self = self else { return }
+            await self.applyBusNumberData(parsedData)
+        }
+    }
+    
     func loadBusRouteCoordinateData() {
         loadCSV(fileName: "BusRouteCoordinates") { [weak self] parsedData in
             guard let self = self else { return }
@@ -52,19 +61,26 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
-    
     @MainActor
     private func applyBusStopData(_ searchResponse: [[String]]) {
         for response in searchResponse {
-            self.allBusData.append(BusStop(busNumber: response[0].isEmpty ? nil : response[0],
-                                           busType: response[1].isEmpty ? nil : Int(response[1]),
-                                           stopOrder: response[2].isEmpty ? nil : Int(response[2]),
-                                           stopNameKorean: response[3].isEmpty ? nil : response[3],
-                                           stopNameRomanized: response[4].isEmpty ? nil : response[4],
-                                           stopNameNaver: response[5].isEmpty ? nil : response[5],
-                                           stopNameTranslated: response[6].isEmpty ? nil : response[6],
-                                           latitude: response[7].isEmpty ? nil : Double(response[7]),
-                                           longitude: response[8].isEmpty ? nil : Double(response[8].dropLast(1))))
+            self.allStopData.append(BusStop(busStopId: response[0].isEmpty ? nil : response[0],
+                                            stopNameKorean: response[1].isEmpty ? nil: response[1],
+                                            stopNameRomanized: response[2].isEmpty ? nil : response[2],
+                                            stopNameNaver: response[4].isEmpty ? nil : response[4],
+                                            stopNameTranslated: response[3].isEmpty ? nil : response[3]))
+        }
+    }
+    
+    @MainActor
+    private func applyBusNumberData(_ searchResponse: [[String]]) {
+        for response in searchResponse {
+            self.allBusNumberData.append(BusStop(
+                busNumber: response[0].isEmpty ? nil : response[0],
+                busNumberId: response[1].isEmpty ? nil : response[1],
+                cityCode: response[2].isEmpty ? nil : response[2],
+                cityName: response[3].isEmpty ? nil : response[3],
+                routeDetail: response[4].isEmpty ? nil : response[4]))
         }
     }
     
@@ -79,19 +95,13 @@ final class BusSearchModel: ObservableObject {
         }
     }
     
-    // MARK: 버스 데이터 검색 (버스 번호, 정류장 이름)
-    func searchBusStops(byNumber number: String) {
-        filteredBusDataForNumber = allBusData.filter { busStop in
+    // MARK: 버스 데이터 검색 (버스 번호)
+    func searchBusNumber(byNumber number: String) {
+        filteredBusDataForNumber = allBusNumberData.filter { busStop in
             if let busNumber = busStop.busNumber {
                 return busNumber.contains(number)
             }
             return false
-        }
-    }
-    
-    func searchBusStops(byName name: String) -> [BusStop] {
-        return filteredBusDataForNumber.filter {
-            name.contains($0.stopNameNaver ?? "") || name.contains($0.stopNameKorean ?? "")
         }
     }
     
